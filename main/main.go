@@ -1,8 +1,9 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
+	"io"
+	"log"
 	"os"
 
 	httplib "github.com/tsemach/go-http"
@@ -15,7 +16,7 @@ func First[T, U any](val T, _ U) T {
 func main() {
 	fmt.Println("main called, os.Getwd():", First(os.Getwd()))
 
-	var http = httplib.NewHTTP[any, any]("https://localhost:8080/health")
+	var http = httplib.NewHTTP[any, any]("https://localhost:8443/health")
 	fmt.Println("new http:", http)
 
 	err := http.SetCerts("certs/ca.crt", "certs/client.crt", "certs/client.key")
@@ -27,7 +28,13 @@ func main() {
 	resp, err := http.Get(nil)
 	defer resp.Body.Close()
 
-	var rs any
-	err = json.NewDecoder(resp.Body).Decode(&rs)
-	fmt.Println(rs)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	bodyString := string(bodyBytes)
+	fmt.Println(bodyString)
+	// var rs any
+	// err = json.NewDecoder(resp.Body).Decode(&rs)
+	// fmt.Println(rs)
 }
