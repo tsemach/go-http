@@ -33,7 +33,7 @@ func main() {
 		log.Fatal(err)
 	}
 	bodyString := string(bodyBytes)
-	fmt.Println(bodyString)
+	fmt.Println("body:", bodyString)
 	// var rs any
 	// err = json.NewDecoder(resp.Body).Decode(&rs)
 	// fmt.Println(rs)
